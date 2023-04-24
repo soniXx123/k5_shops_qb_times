@@ -62,6 +62,8 @@ In the included config.lua, you will find 3 predefined shops that help you move 
 |             | _heading_: **(number)** This is the heading of the cashier Ped                                              |
 | paymentType | **(number)** This is the payment type selector for the shop                                                 |
 | items       | **(table)** This is the table for the shop items. See below                                                 |
+| openingTime | 5 = 5:00 AM (24h format) - Time when the shop opens                                                         |
+| closingTime | 18 = 6:00 PM (24h format) - Time when the shop closes                                                       |
 
 ### Items
 
