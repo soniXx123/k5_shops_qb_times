@@ -13,13 +13,6 @@ Watch the demo here: [YouTube](https://www.youtube.com/watch?v=9vnCYj48c_c)
 
 If you need any help, you can check out my [Discord](https://discord.com/invite/WmANgpdrgZ)
 
-## Dependencies
-
-- es_extended
-- esx_addonaccount
-
-The script was tested using **ESX Legacy**. I do not guarantee if it works with other versions
-
 # Download & Installation
 
 To use this script, you need to edit the configuration to fit your needs.
