@@ -25,6 +25,10 @@ Config.Shops = {
                             --1 = cash 
                             --2 = bank 
                             --3 = black money
+
+        openingTime = 6, -- 5 = 5:00 AM (24h format) - Time when the shop opens
+        closingTime = 5, -- 18 = 6:00 PM (24h format) - Time when the shop closes
+
         items = {
             -------------------------------------------------------------
             -- MAKE SURE EACH ITEM IS REGISTERED IN YOUR INVENTORY SYSTEM,
@@ -73,6 +77,10 @@ Config.Shops = {
             heading = 34.899082183838
         },
         paymentType = 1,
+
+        openingTime = 6, -- 5 = 5:00 AM (24h format) - Time when the shop opens
+        closingTime = 5, -- 18 = 6:00 PM (24h format) - Time when the shop closes
+
         items = {
             ['sandwich'] = {
                 label = "Sandwich",
@@ -94,6 +102,10 @@ Config.Shops = {
         infinite = true, -- If true, the stop doesn't keep track of the storage, palyers can sell and buy as many items as they want.
         coords = vector3(420.7734375, -2064.4226074219, 22.116249084473),
         shopName = "Drug Dealer",
+
+        openingTime = 6, -- 5 = 5:00 AM (24h format) - Time when the shop opens
+        closingTime = 5, -- 18 = 6:00 PM (24h format) - Time when the shop closes
+        
         items = {
             ['joint'] = {
                 label = "Joint",

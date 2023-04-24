@@ -25,8 +25,3 @@ ui_page "html/index.html"
 files({
     'html/**'
 })
-
-dependencies {
-    'es_extended',
-    'esx_addonaccount',
-}

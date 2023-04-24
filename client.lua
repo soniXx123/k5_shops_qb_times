@@ -1,31 +1,8 @@
-ESX = nil
+local QBCore = exports['qb-core']:GetCoreObject()
 
 local openShop = nil
 local loadedPeds = {}
-
-Citizen.CreateThread(function()
-	while ESX == nil do
-		TriggerEvent('esx:getSharedObject', function(obj) ESX = obj end)
-        ESX.PlayerData = ESX.GetPlayerData()
-		Citizen.Wait(0)
-	end
-
-    while not ESX.GetPlayerData().job do
-		Citizen.Wait(10)
-	end
-
-	ESX.PlayerData = ESX.GetPlayerData()
-end)
-
-RegisterNetEvent('esx:playerLoaded')
-AddEventHandler('esx:playerLoaded', function(xPlayer)
-	ESX.PlayerData = xPlayer
-end)
-
-RegisterNetEvent('esx:setJob')
-AddEventHandler('esx:setJob', function(job)
-	ESX.PlayerData.job = job
-end)
+local showingPrompt = false
 
 Citizen.CreateThread(function()
     while true do
@@ -36,9 +13,12 @@ Citizen.CreateThread(function()
             local distance = #(v.coords - playerPos)
             if distance < 2.0 then
                 sleep = 1
-                DrawText3D(v.coords[1], v.coords[2], v.coords[3]," ~w~[~b~E~w~] "..v.shopName)
+                if not showingPrompt then
+                    showingPrompt = true
+                    exports["qb-core"]:DrawText('[E] '..v.shopName)
+                end
                 if IsControlJustReleased(0, 38) then
-                    local userJob = ESX.PlayerData.job.name
+                    local userJob = QBCore.Functions.GetPlayerData().job.name
                     local isInJobs = false
                     
                     if v.sellJob ~= nil then
@@ -50,31 +30,40 @@ Citizen.CreateThread(function()
                     end
 
                     if v.sellOnly and v.sellJob ~= nil and not isInJobs then
-                        ESX.ShowNotification(Config.Locales[Config.Locale].IncorrectJob)
+                        QBCore.Functions.Notify(Config.Locales[Config.Locale].IncorrectJob, "error")
                     else
-                        ESX.TriggerServerCallback('k5_shops:getInitalData', function(open, shopData, itemsWithInventoryCount, playerJob)
-                            if open then
-                                local shopData = v
-                                shopData.items = itemsWithInventoryCount
-                                shopData.playerJob = playerJob
-                                shopData.shopId = k
-                                openShop = k
-                                TriggerServerEvent("k5_shops:lockShop", openShop)
-                                SetNuiFocus(true, true)
-                                SendNUIMessage({
-                                    action = "open",
-                                    data = shopData
-                                })
-                            else
-                                ESX.ShowNotification(Config.Locales[Config.Locale].AlreadyOpen)
-                            end
-                        end, k)
+                        print(v.openingTime, v.closingTime, GlobalState.currentHour)
+                        if GlobalState.currentHour < v.openingTime and GlobalState.currentHour > v.closingTime then
+                            QBCore.Functions.Notify((Config.Locales[Config.Locale].ClosedShop, "error")
+                        else 
+                            QBCore.Functions.TriggerCallback('k5_shops:getInitalData', function(open, shopData, itemsWithInventoryCount, playerJob)
+                                if open then
+                                    local shopData = v
+                                    shopData.items = itemsWithInventoryCount
+                                    shopData.playerJob = playerJob
+                                    shopData.shopId = k
+                                    openShop = k
+                                    TriggerServerEvent("k5_shops:lockShop", openShop)
+                                    SetNuiFocus(true, true)
+                                    SendNUIMessage({
+                                        action = "open",
+                                        data = shopData
+                                    })
+                                else
+                                    QBCore.Functions.Notify(Config.Locales[Config.Locale].AlreadyOpen, "error")
+                                end
+                            end, k)
+                        end
                     end
                 end
             end
-
+            if distance > 2.0 then 
+                showingPrompt = false
+                exports["qb-core"]:HideText()
+            end
             if distance > 2.0 and openShop == k then
                 closeUI()
+
             end
         end
         Citizen.Wait(sleep)
@@ -122,7 +111,7 @@ end
 
 RegisterNetEvent('k5_shops:resetUI')
 AddEventHandler('k5_shops:resetUI', function(shopName)
-    ESX.TriggerServerCallback('k5_shops:getInitalData', function(shopData, itemsWithInventoryCount, playerJob)
+    QBCore.Functions.TriggerCallback('k5_shops:getInitalData', function(shopData, itemsWithInventoryCount, playerJob)
         local shopData = Config.Shops[shopName]
         shopData.items = itemsWithInventoryCount
         shopData.playerJob = playerJob
@@ -157,20 +146,3 @@ RegisterNetEvent('k5_shops:closeUI')
 AddEventHandler('k5_shops:closeUI', function()
     closeUI()
 end)
-
-function DrawText3D(x, y, z, text)
-
-    local onScreen,_x,_y=World3dToScreen2d(x,y,z)
-    local px,py,pz=table.unpack(GetGameplayCamCoords())
-    
-    SetTextScale(0.35, 0.35)
-    SetTextFont(4)
-    SetTextProportional(1)
-    SetTextColour(255, 255, 255, 215)
-    SetTextEntry("STRING")
-    SetTextCentre(1)
-    AddTextComponentString(text)
-    DrawText(_x,_y)
-    local factor = (string.len(text)) / 370
-    DrawRect(_x,_y+0.0125, 0.002+ factor, 0.03, 0, 0, 0, 200)
-end
