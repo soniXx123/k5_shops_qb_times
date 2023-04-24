@@ -1,4 +1,4 @@
-# K5 Shops
+# K5 Shops for QB-Core with serverside opening times
 
 ![K5 Shops](https://forum.cfx.re/uploads/default/original/4X/d/e/9/de939b927f894f9fab398149d0e9c0f624030488.jpeg)
 
